@@ -1,0 +1,7 @@
+polars
+pandas
+kmapper
+scikit-learn
+networkx
+numpy
+umap-learn
