@@ -66,6 +66,9 @@ def main():
     # [NEW] Step B-2: Save Static Image
     png_path = os.path.join(Config.PHOTO_OUTPUT_DIR, Config.FILE_TDA_GRAPH_IMG)
     pipeline.save_graph_as_png(png_path)
+    
+    # [NEW] Step B-3: Generate Persistence Barcodes
+    pipeline.visualize_persistence(Config.PHOTO_OUTPUT_DIR)
 
     # Step C: Export Results
     print("\n[4/4] Exporting Results...")

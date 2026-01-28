@@ -10,6 +10,16 @@ import polars as pl
 import polars as pl
 import matplotlib.pyplot as plt
 from config import Config
+import os
+
+# [상단 import 추가]
+try:
+    from ripser import ripser
+    from persim import plot_diagrams
+    HAS_RIPSER = True
+except ImportError:
+    HAS_RIPSER = False
+    print("WARNING: 'ripser' or 'persim' not found. Barcode visualization disabled.")
 
 # Try importing RAPIDS cuML
 try:
@@ -166,6 +176,13 @@ class TDAPipeline:
             
         nx_graph = km.adapter.to_nx(self.graph)
         
+        # [SAFEGUARD] Skip static plotting for very large graphs to prevent OOM
+        num_nodes = nx_graph.number_of_nodes()
+        if num_nodes > 5000:
+            print(f"⚠️  Graph too large for static PNG ({num_nodes} nodes > 5000). Skipping image generation to prevent crash.")
+            print("    Please refer to 'mapper_output.html' for interactive exploration.")
+            return
+        
         # 2. 노드 색상 결정 (중증도 기준)
         # 각 노드(클러스터)에 속한 환자들의 평균 중증도(Comorbidity_Count)를 계산해 색깔로 씀
         node_colors = []
@@ -209,6 +226,69 @@ class TDAPipeline:
         plt.savefig(output_path, dpi=300, bbox_inches='tight') # 고해상도 저장
         plt.close()
         print("   -> PNG Saved Successfully!")
+
+    def visualize_persistence(self, output_dir, max_points=3000):
+        """
+        Calculates Persistent Homology and generates Barcode/Diagram plots.
+        Useful for validating the 'lifespan' of loops.
+        """
+        if not HAS_RIPSER:
+            return
+
+        print(f"   -> Calculating Persistent Homology (Barcodes) on Lens data...")
+        
+        # 1. 데이터 샘플링 (너무 많으면 느림)
+        if len(self.X_lens) > max_points:
+            indices = np.random.choice(len(self.X_lens), max_points, replace=False)
+            sampled_data = self.X_lens[indices]
+        else:
+            sampled_data = self.X_lens
+
+        # 2. Ripser 실행 (H0: 연결성, H1: 루프)
+        # metric='euclidean' on the UMAP projected lens
+        result = ripser(sampled_data, maxdim=1)
+        diagrams = result['dgms']
+
+        # 3. 바코드 플롯 (Barcode Plot) 그리기
+        # H1 (Loops)만 시각화
+        plt.figure(figsize=(10, 6))
+        plot_diagrams(diagrams, show=False, plot_only=[1]) # H1만 표시
+        plt.title("Persistence Diagram (H1 Loops)")
+        
+        diag_path = os.path.join(output_dir, "persistence_diagram.png")
+        plt.savefig(diag_path)
+        plt.close()
+        
+        # 4. 진짜 '바코드(Barcode)' 형태 (Life-span Bar)
+        # Persim 라이브러리의 plot_diagrams는 점도표가 기본이나, 
+        # 이를 'Lifetime' 형태로 해석 가능. 바코드를 직접 그리는 커스텀 플롯:
+        
+        plt.figure(figsize=(12, 6))
+        # H1 데이터 가져오기
+        h1_dgm = diagrams[1]
+        # 생존 기간(Lifetime) 순으로 정렬
+        lifetimes = h1_dgm[:, 1] - h1_dgm[:, 0]
+        sorted_indices = np.argsort(lifetimes)[::-1] # 긴 것부터 정렬
+        sorted_dgm = h1_dgm[sorted_indices]
+
+        # 상위 100개 루프만 시각화 (너무 많으면 까맣게 보임)
+        top_k = min(100, len(sorted_dgm))
+        for i in range(top_k):
+            birth, death = sorted_dgm[i]
+            # 무한대(inf)는 적당히 끊음
+            if np.isinf(death): death = np.max(h1_dgm[~np.isinf(h1_dgm)]) * 1.1
+            plt.plot([birth, death], [i, i], color='orange', lw=3)
+            
+        plt.title(f"Top {top_k} Persistence Barcodes (H1 Loops Lifespan)")
+        plt.xlabel("Filtration Value (Scale)")
+        plt.ylabel("Loop Index (Sorted by Persistence)")
+        plt.grid(axis='x', alpha=0.3)
+        
+        barcode_path = os.path.join(output_dir, "persistence_barcode.png")
+        plt.savefig(barcode_path)
+        plt.close()
+        
+        print(f"   -> Saved Barcodes to: {barcode_path}")
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

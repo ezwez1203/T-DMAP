@@ -1,0 +1,33 @@
+2026-01-27 23:56:18,779 - INFO - Logging to: /home/lucius/바탕화면/HIRA/Code/result/text/ai_modeling_20260127_235618.txt
+2026-01-27 23:56:19,144 - INFO - === Training Model A: LSTM for Loop Risk ===
+2026-01-27 23:56:19,144 - INFO - Loading Raw Data...
+2026-01-27 23:56:19,144 - INFO - Loading CSV files from /home/lucius/바탕화면/HIRA/Code/csv/standardized_data...
+2026-01-27 23:56:19,243 - INFO - Loaded 153538 unique patients from EDU200.
+2026-01-27 23:56:19,275 - INFO - Loading Labels (Loop vs Super-Responders)...
+2026-01-27 23:56:19,466 - INFO - Label Stats - Loop: 67958, Super-Responders: 0
+2026-01-27 23:56:19,497 - INFO - Total Patients for Modeling: 67958
+2026-01-27 23:56:19,499 - INFO - Class Distribution:
+label
+1    67958
+Name: count, dtype: int64
+2026-01-27 23:56:19,503 - INFO - Preprocessing Sequences...
+2026-01-27 23:56:19,503 - WARNING - 'RECU_FR_DD' not found. Using original order (risk of temporal leakage).
+2026-01-27 23:56:19,505 - INFO - Using Features for LSTM: ['age_group', 'SEX_TP_CD', 'VST_DDCNT']
+2026-01-27 23:56:40,263 - WARNING - ⚠️  Only one class found: [1]. Cannot train binary classifier properly.
+2026-01-27 23:56:40,263 - WARNING - Please check TDA analysis thresholds in config.py to generate both Loop and Super-Responder groups.
+2026-01-27 23:56:40,301 - INFO - === Training Model B: Escape Recommender (Random Forest + SHAP) ===
+2026-01-27 23:56:40,301 - INFO - Loading Raw Data...
+2026-01-27 23:56:40,301 - INFO - Loading CSV files from /home/lucius/바탕화면/HIRA/Code/csv/standardized_data...
+2026-01-27 23:56:40,335 - INFO - Loaded 153538 unique patients from EDU200.
+2026-01-27 23:56:40,352 - INFO - Loading Labels (Loop vs Super-Responders)...
+2026-01-27 23:56:40,497 - INFO - Label Stats - Loop: 67958, Super-Responders: 0
+2026-01-27 23:56:40,515 - INFO - Total Patients for Modeling: 67958
+2026-01-27 23:56:40,516 - INFO - Class Distribution:
+label
+1    67958
+Name: count, dtype: int64
+2026-01-27 23:56:40,520 - WARNING - ⚠️  Only one class found in data: [1]. Cannot train RF classifier.
+2026-01-27 23:56:40,520 - WARNING - Please adjust TDA thresholds in config.py:
+2026-01-27 23:56:40,520 - WARNING -   - Increase TDA_HIGH_SEVERITY_Q (e.g., 0.75)
+2026-01-27 23:56:40,520 - WARNING -   - Decrease TDA_LOW_COST_Q (e.g., 0.25)
+2026-01-27 23:56:40,520 - WARNING - Then re-run 06_run_analysis.py to regenerate labels.

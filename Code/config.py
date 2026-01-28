@@ -47,16 +47,23 @@ class Config:
     TDA_RANDOM_STATE = 42
     
     # Cover (Mapper)
-    TDA_RESOLUTION = 10      # n_cubes (Resolution) - Higher = More nodes/detail
-    TDA_OVERLAP = 0.2        # perc_overlap - Higher = More connections
+    TDA_RESOLUTION = 15      # n_cubes (Resolution)
+    TDA_OVERLAP = 0.5        # perc_overlap
     
     # Clustering (DBSCAN)
-    TDA_EPS = 0.5            # Epsilon neighborhood for DBSCAN
+    TDA_EPS = 1.5            # Epsilon neighborhood for DBSCAN
     TDA_MIN_SAMPLES = 2      # Min points to form a cluster
     
-    # Analysis Thresholds
-    TDA_HIGH_SEVERITY_Q = 0.75  # Quantile for High Comorbidity (Super-Responder check)
-    TDA_LOW_COST_Q = 0.25       # Quantile for Low Cost (Super-Responder check)
+    # [수정 포인트!] Analysis Thresholds (양극단 분리 전략)
+    # ---------------------------------------------------------
+    # 목표: Loop와 Super-Responder를 균형있게 분리
+    # Loop: 상위 60% 이상 심각 (quantile 0.4 이상)
+    # Super-Responder: 하위 40% 비용 (quantile 0.4 이하)
+    TDA_HIGH_SEVERITY_Q = 0.40  # 상위 60% 심각도를 Loop로 인정
+    
+    # Super-Responder: 하위 40% 비용까지 인정 (완화)
+    TDA_LOW_COST_Q = 0.40
+    # ---------------------------------------------------------
 
     # ==========================================
     # 4. AI Modeling
@@ -65,7 +72,15 @@ class Config:
     MODEL_SEED = 42
     TEST_SIZE = 0.2
     
+    # GPU Memory Optimization (for 16GB VRAM)
+    # - Batch processing for large datasets
+    # - Data type optimization (float32 instead of float64)
+    GPU_BATCH_SIZE = 10000  # Process 10K patients at a time
+    USE_FLOAT32 = True      # Memory optimization
+    
     # Model A: LSTM (Chronic Loop Prediction)
+    # - Markov Chain-based sequential modeling
+    # - Predicts loop entry probability from visit history
     LSTM_HIDDEN_DIM = 64
     LSTM_NUM_LAYERS = 2
     LSTM_LEARNING_RATE = 0.001

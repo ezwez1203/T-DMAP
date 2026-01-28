@@ -1,0 +1,59 @@
+2026-01-27 22:30:17,906 - INFO - Logging to: /home/lucius/바탕화면/HIRA/Code/result/text/ai_modeling_20260127_223017.txt
+2026-01-27 22:30:18,145 - INFO - === Training Model A: LSTM for Loop Risk ===
+2026-01-27 22:30:18,145 - INFO - Loading Raw Data...
+2026-01-27 22:30:18,146 - INFO - Loading CSV files from /home/lucius/바탕화면/HIRA/Code/csv/standardized_data...
+2026-01-27 22:30:18,207 - INFO - Loaded 153538 unique patients from EDU200.
+2026-01-27 22:30:18,227 - INFO - Loading Labels (Loop vs Super-Responders)...
+2026-01-27 22:30:18,331 - INFO - Label Stats - Loop: 67903, Super-Responders: 3
+2026-01-27 22:30:18,345 - INFO - Total Patients for Modeling: 67906
+2026-01-27 22:30:18,346 - INFO - Class Distribution:
+label
+1    67903
+0        3
+Name: count, dtype: int64
+2026-01-27 22:30:18,349 - INFO - Preprocessing Sequences...
+2026-01-27 22:30:18,349 - WARNING - 'RECU_FR_DD' not found. Using original order (risk of temporal leakage).
+2026-01-27 22:30:18,349 - INFO - Using Features for LSTM: ['age_group', 'SEX_TP_CD', 'VST_DDCNT']
+2026-01-27 22:30:35,727 - INFO - Epoch 1/20, Loss: 0.4421
+2026-01-27 22:30:39,054 - INFO - Epoch 2/20, Loss: 0.3175
+2026-01-27 22:30:42,140 - INFO - Epoch 3/20, Loss: 0.3061
+2026-01-27 22:30:45,018 - INFO - Epoch 4/20, Loss: 0.3011
+2026-01-27 22:30:47,990 - INFO - Epoch 5/20, Loss: 0.2934
+2026-01-27 22:30:50,910 - INFO - Epoch 6/20, Loss: 0.3011
+2026-01-27 22:30:53,852 - INFO - Epoch 7/20, Loss: 0.2921
+2026-01-27 22:30:56,757 - INFO - Epoch 8/20, Loss: 0.2898
+2026-01-27 22:30:59,629 - INFO - Epoch 9/20, Loss: 0.2901
+2026-01-27 22:31:02,698 - INFO - Epoch 10/20, Loss: 0.2913
+2026-01-27 22:31:06,427 - INFO - Epoch 11/20, Loss: 0.2884
+2026-01-27 22:31:09,382 - INFO - Epoch 12/20, Loss: 0.2889
+2026-01-27 22:31:12,264 - INFO - Epoch 13/20, Loss: 0.2898
+2026-01-27 22:31:15,171 - INFO - Epoch 14/20, Loss: 0.2924
+2026-01-27 22:31:18,063 - INFO - Epoch 15/20, Loss: 0.2895
+2026-01-27 22:31:21,524 - INFO - Epoch 16/20, Loss: 0.2868
+2026-01-27 22:31:24,389 - INFO - Epoch 17/20, Loss: 0.2870
+2026-01-27 22:31:27,210 - INFO - Epoch 18/20, Loss: 0.2854
+2026-01-27 22:31:30,128 - INFO - Epoch 19/20, Loss: 0.2864
+2026-01-27 22:31:33,071 - INFO - Epoch 20/20, Loss: 0.2836
+2026-01-27 22:31:33,283 - INFO - 
+LSTM Test Results:
+2026-01-27 22:31:33,283 - INFO - AUC: 0.8545
+2026-01-27 22:31:33,353 - INFO - === Training Model B: Escape Recommender (Random Forest + SHAP) ===
+2026-01-27 22:31:33,355 - INFO - Loading Raw Data...
+2026-01-27 22:31:33,356 - INFO - Loading CSV files from /home/lucius/바탕화면/HIRA/Code/csv/standardized_data...
+2026-01-27 22:31:33,378 - INFO - Loaded 153538 unique patients from EDU200.
+2026-01-27 22:31:33,389 - INFO - Loading Labels (Loop vs Super-Responders)...
+2026-01-27 22:31:33,477 - INFO - Label Stats - Loop: 67903, Super-Responders: 3
+2026-01-27 22:31:33,490 - INFO - Total Patients for Modeling: 67906
+2026-01-27 22:31:33,491 - INFO - Class Distribution:
+label
+1    67903
+0        3
+Name: count, dtype: int64
+2026-01-27 22:31:33,558 - INFO - Training on 67906 patients with 3 features
+2026-01-27 22:31:33,558 - INFO - Using cuML RandomForest (GPU-accelerated)
+2026-01-27 22:31:33,945 - INFO - Random Forest Training Complete.
+2026-01-27 22:31:34,001 - INFO - 
+Random Forest Results (Training Set):
+2026-01-27 22:31:34,016 - INFO - Generating SHAP Explanations...
+2026-01-27 22:31:34,016 - INFO - Converting cuML model to CPU for SHAP analysis...
+2026-01-27 22:31:36,449 - INFO - SHAP Summary Plot saved to /home/lucius/바탕화면/HIRA/Code/result/photo/solution_shap.png
